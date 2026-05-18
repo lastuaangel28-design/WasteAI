@@ -4,6 +4,9 @@ from tensorflow.keras.preprocessing import image
 import numpy as np
 from PIL import Image
 import tensorflow as tf
+# ADD THESE TWO LINES:
+from tensorflow.keras.applications import resnet50
+from tensorflow.keras.applications import mobilenet_v2
 
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="Model Comparison", layout="wide")
@@ -24,12 +27,25 @@ def load_efficientnet():
     return load_model("waste_efficientnet_3class.keras")
 
 @st.cache_resource
+# ... existing code ...
+
+@st.cache_resource
 def load_resnet():
-    return load_model("waste_resnet_3class.keras")
+    # FIX: Tell Keras where to find the preprocess_input function
+    return load_model(
+        "waste_resnet_3class.keras", 
+        custom_objects={'preprocess_input': resnet50.preprocess_input}
+    )
 
 @st.cache_resource
 def load_mobilenet():
-    return load_model("waste_mobilenet_3class.keras")
+    # FIX: Tell Keras where to find the preprocess_input function
+    return load_model(
+        "waste_mobilenet_3class.keras", 
+        custom_objects={'preprocess_input': mobilenet_v2.preprocess_input}
+    )
+
+# ... existing code ...
 
 # --- PREPROCESSING FUNCTIONS ---
 def preprocess_efficientnet(img_array):
